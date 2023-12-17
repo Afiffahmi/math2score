@@ -25,28 +25,7 @@ import { Avatar, CardActionArea, InputLabel, Stack } from "@mui/material";
 import AdbIcon from "@mui/icons-material/Adb";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import SettingsIcon from "@mui/icons-material/Settings";
-import Button from "@mui/material/Button";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import useSound from 'use-sound';
-import correctSound from './correctSound.mp3';
-import wrongSound from './wrongSound.mp3'
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+import Quiz from "./Quiz";
 
 const drawerWidth = 240;
 
@@ -95,74 +74,18 @@ const Drawer = styled(MuiDrawer, {
     }),
   },
 }));
-const questions = [
-  {
-    question: "Berapakah nilai 2+2?",
-    choices: [4, 5, 6],
-    correctAnswer: 4,
-  },
-  {
-    question: "Tulang buang T jadi apa?",
-    choices: ["ulang", "Kulang", "Bulang"],
-    correctAnswer: "ulang",
-  },
-  {
-    question: "Berapakah nilai 2+5?",
-    choices: [4, 5, 7],
-    correctAnswer: 7,
-  },
-  {
-    question: "Berapakah nilai 2+3?",
-    choices: [4, 5, 6],
-    correctAnswer: 5,
-  },
-  // Add more questions here
-];
+
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0);
-  const [correctAnswers, setCorrectAnswers] = React.useState(0);
-  const [selectedAnswer, setSelectedAnswer] = React.useState(null);
-  const [timer, setTimer] = React.useState(30);
-  const [playWrong] = useSound(wrongSound);
-  const [playCorrect] = useSound(correctSound);
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
   React.useEffect(() => {
-    const countdown = setInterval(() => {
-      if (timer > 0) {
-        setTimer(timer - 1);
-      } else {
-        clearInterval(countdown);
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-        setTimer(30);
-      }
-    }, 1000);
-    return () => clearInterval(countdown);
-  }, [timer, currentQuestionIndex]);
-
-  
-
-  const checkAnswer = (selectedAnswer) => {
-    if (selectedAnswer === questions[currentQuestionIndex].correctAnswer) {
-      setCorrectAnswers(correctAnswers + 1);
-      playCorrect();
-    }else{
-      playWrong();
-    }
-    setCurrentQuestionIndex(currentQuestionIndex + 1);
-    setTimer(30);
-  };
-
-  const retryQuiz = () => {
-    setCurrentQuestionIndex(0);
-    setCorrectAnswers(0);
-  };
+  })
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -244,72 +167,7 @@ export default function Dashboard() {
           }}
         >
           <Toolbar />
-          <Container
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Stack spacing={2} direction="column">
-              <Typography variant="h4">Mathematic Form 4</Typography>
-              <Divider />
-              <Box sx={{ height: 10 }} />
-              <Stack spacing={2} direction="column">
-                {currentQuestionIndex < questions.length ? (
-                  <Card sx={{ minWidth: 345 }}>
-                    <CardActionArea>
-                      <CardContent>
-                        <Typography gutterBottom variant="h5" component="div">
-                        Quiz 
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {questions[currentQuestionIndex].question}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Time remaining: {timer} seconds
-                        </Typography>
-                        <InputLabel>Answer</InputLabel>
-                        <Stack spacing={2}>
-                          {questions[currentQuestionIndex].choices.map(
-                            (choice) => (
-                              <Button
-                                key={choice}
-                                variant="contained"
-                                color={
-                                  selectedAnswer === choice &&
-                                  selectedAnswer ===
-                                    questions[currentQuestionIndex]
-                                      .correctAnswer
-                                    ? "success"
-                                    : "primary"
-                                }
-                                onClick={() => checkAnswer(choice)}
-                              >
-                                {choice}
-                              </Button>
-                            )
-                          )}
-                        </Stack>
-                        <Typography variant="body3" color='text-secondary'>{currentQuestionIndex + 1} of {questions.length}</Typography>
-                      </CardContent>
-                     
-                    </CardActionArea>
-                  </Card>
-                ) : (
-                  <>
-                    <Typography variant="h5" component="div">
-                      Quiz finished. You got {correctAnswers} out of{" "}
-                      {questions.length} correct.
-                    </Typography>
-                    <Button variant="contained" onClick={retryQuiz}>
-                      Retry
-                    </Button>
-                  </>
-                )}
-              </Stack>
-            </Stack>
-          </Container>
+        <Quiz />
         </Box>
       </Box>
     </ThemeProvider>
